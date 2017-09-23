@@ -14,8 +14,31 @@ class App extends React.Component {
   }
 
   search (term) {
-    console.log(`${term} was searched`);
-    // TODO
+    let query = {username: term};
+    $.ajax({
+      url: '/repos',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(query),
+      success: () => {
+        console.log('Successful!') // on success, send get request to server with query data to return matching repo from data base
+        $.ajax({
+          url: '/repos',
+          type: 'GET',
+          contentType: 'application/json',
+          data: JSON.stringify(query),
+          success: (data) => {
+            this.setState({repos: data})
+          },
+          error: (err) => {
+            console.log('Failed GET request!', err);
+          }
+        });
+      },
+      error: (err) => {
+        console.log('Failed POST request!', err);
+      }
+    });
   }
 
   render () {
